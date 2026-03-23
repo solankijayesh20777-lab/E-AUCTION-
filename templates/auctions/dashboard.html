@@ -22,15 +22,16 @@
             <div style="width: 10px; height: 10px; border-radius: 50%; background: #ef4444; animation: pulse 2s infinite;"></div>
             <span style="font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--primary);">Live Auction Insights</span>
         </div>
-        <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; background: #000;">
-            <video 
-                style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;"
-                autoplay muted loop playsinline>
-                <source src="https://player.vimeo.com/external/394333671.sd.mp4?s=1f1f9e2b4f9d4f9b8c9e5e5b8c9e5e5b8c9e5e5b&profile_id=139&oauth2_token_id=57447761" type="video/mp4">
-            </video>
-            <div style="position: absolute; bottom: 0; left: 0; right: 0; padding: 2rem; background: linear-gradient(transparent, rgba(0,0,0,0.9)); text-align: left; pointer-events: none;">
-                <h2 style="margin: 0; font-size: 1.5rem; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">Elite Auction Experience</h2>
-                <p style="margin: 0.5rem 0 0; color: rgba(255,255,255,0.9); font-size: 0.9rem;">Watch live bidding and learn how to maximize your assets.</p>
+        <div style="position: relative; padding-bottom: 30%; height: 0; overflow: hidden; background: #000; max-width: 600px; margin: 0 auto; border-radius: 1rem;">
+            <iframe 
+                style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;"
+                src="https://www.youtube.com/embed/f3uW8E_7Hk0?autoplay=1&mute=1&loop=1&playlist=f3uW8E_7Hk0&enablejsapi=1&origin={{ request.scheme }}://{{ request.get_host }}" 
+                title="Auction Highlights" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                allowfullscreen>
+            </iframe>
+            <div style="position: absolute; bottom: 0; left: 0; right: 0; padding: 1rem; background: linear-gradient(transparent, rgba(0,0,0,0.9)); text-align: left; pointer-events: none;">
+                <h3 style="margin: 0; font-size: 1.1rem; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">Elite Auction Insights</h3>
             </div>
         </div>
     </div>
