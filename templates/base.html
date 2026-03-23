@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}E-Auction Platform{% endblock %}</title>
+    <!-- Use Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #fbbf24;
+            --primary-hover: #d97706;
+            --bg-dark: #0c0a09;
+            --bg-glass: rgba(12, 10, 9, 0.45);
+            --text-light: #f8fafc;
+            --text-muted: #d6d3d1;
+            --border-glass: rgba(251, 191, 36, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        /* Background Video Wrapper */
+        .video-bg-wrapper {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            overflow: hidden;
+            background-color: #000;
+        }
+
+        .video-bg-wrapper video {
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            object-fit: cover;
+            opacity: 0.6;
+            /* Restored original opacity */
+        }
+
+        /* Navbar */
+        nav {
+            background: var(--bg-glass);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-glass);
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        nav .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #fff;
+            text-decoration: none;
+            letter-spacing: 1px;
+            background: linear-gradient(90deg, #f59e0b, #fbbf24);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        nav .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        nav a {
+            color: var(--text-light);
+            text-decoration: none;
+            font-weight: 400;
+            transition: color 0.3s ease;
+        }
+
+        nav a:hover {
+            color: var(--primary);
+        }
+
+        /* Main Container */
+        main {
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            z-index: 1;
+        }
+
+        /* Glassmorphism Card (For Login, Home, etc.) */
+        .glass-card {
+            background: var(--bg-glass);
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            border: 1px solid var(--border-glass);
+            border-radius: 1.5rem;
+            padding: 2.5rem;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8), 0 0 40px rgba(251, 191, 36, 0.05);
+            animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .glass-card h1,
+        .glass-card h2 {
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        /* Form Elements */
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        form p {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        label {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-glass);
+            color: #fff;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="password"]:focus {
+            border-color: var(--primary);
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        }
+
+        /* Buttons */
+        button,
+        .btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        button:hover,
+        .btn:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.4);
+        }
+
+        /* Messages */
+        .messages {
+            list-style: none;
+            margin-bottom: 1rem;
+        }
+
+        .messages li {
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .messages .success {
+            background: rgba(34, 197, 94, 0.2);
+            border: 1px solid rgba(34, 197, 94, 0.5);
+            color: #4ade80;
+        }
+
+        .messages .error {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.5);
+            color: #f87171;
+        }
+
+        .messages .info {
+            background: rgba(56, 189, 248, 0.2);
+            border: 1px solid rgba(56, 189, 248, 0.5);
+            color: #7dd3fc;
+        }
+
+        /* Links */
+        .auth-links {
+            margin-top: 1.5rem;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        .auth-links auto {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .auth-links a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .auth-links a:hover {
+            text-decoration: underline;
+        }
+
+        /* Utilities */
+        .text-center {
+            text-align: center;
+        }
+
+        .mt-4 {
+            margin-top: 1rem;
+        }
+
+        .mb-4 {
+            margin-bottom: 1rem;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 9999px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status-green {
+            background: rgba(34, 197, 94, 0.2);
+            color: #4ade80;
+        }
+
+        .status-red {
+            background: rgba(239, 68, 68, 0.2);
+            color: #f87171;
+        }
+
+        /* Utility Classes */
+        .d-none { display: none !important; }
+        .d-block { display: block !important; }
+        .notif-unread { border-left: 3px solid var(--primary) !important; }
+        .notif-read { border-left: 3px solid var(--border-glass) !important; }
+        
+        /* Transaction Classes */
+        .tx-positive-bg { background: rgba(34, 197, 94, 0.2) !important; }
+        .tx-negative-bg { background: rgba(239, 68, 68, 0.2) !important; }
+        .text-success { color: #4ade80 !important; }
+        .text-danger { color: #f87171 !important; }
+    </style>
+</head>
+
+<body>
+
+    {% block video_bg %}
+    <!-- Default empty block, overridden in home.html -->
+    {% endblock %}
+
+    <nav>
+        <a href="{% url 'item_list' %}" class="logo">EliteAuction</a>
+        <div class="nav-links">
+            {% if user.is_authenticated %}
+            <div style="position: relative; margin-right: 1rem;">
+                <span id="notif-bell" style="cursor: pointer; font-size: 1.2rem;">🔔</span>
+                <span id="notif-count" class="{% if unread_notifications_count > 0 %}d-block{% else %}d-none{% endif %}" style="position: absolute; top: -5px; right: -5px; background: #ef4444; color: white; border-radius: 50%; padding: 2px 6px; font-size: 0.7rem;">{{ unread_notifications_count }}</span>
+                <div id="notif-dropdown" style="display: none; position: absolute; top: 30px; right: 0; width: 300px; background: var(--bg-glass); backdrop-filter: blur(20px); border: 1px solid var(--border-glass); border-radius: 0.5rem; padding: 1rem; z-index: 1000; box-shadow: 0 10px 25px rgba(0,0,0,0.5);">
+                    <h4 style="margin-bottom: 0.5rem; font-size: 0.9rem; border-bottom: 1px solid var(--border-glass); padding-bottom: 0.5rem;">Notifications</h4>
+                    <div id="notif-list" style="max-height: 200px; overflow-y: auto; display: flex; flex-direction: column; gap: 0.5rem;">
+                        {% for notif in notifications_list %}
+                            <div class="{% if notif.is_read %}notif-read{% else %}notif-unread{% endif %}" style="padding: 0.5rem; background: rgba(255,255,255,0.05); border-radius: 4px; font-size: 0.85rem;">
+                                <a href="{{ notif.link|default:'#' }}" style="color: white; text-decoration: none;">{{ notif.message }}</a>
+                            </div>
+                        {% empty %}
+                            <div style="text-align: center; padding: 1rem; color: var(--text-muted); font-size: 0.8rem;">
+                                No notifications.
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <a href="{% url 'item_list' %}">Browse Auctions</a>
+            <a href="{% url 'buyer_dashboard' %}">Buyer Dashboard</a>
+            <a href="{% url 'seller_dashboard' %}">Sell Items</a>
+            <a href="{% url 'watchlist' %}">Watchlist</a>
+            <a href="{% url 'wallet_dashboard' %}">My Wallet</a>
+            <a href="{% url 'profile' %}">Profile</a>
+            <form method="post" action="{% url 'account_logout' %}" style="display:inline; margin:0; padding:0;">
+                {% csrf_token %}
+                <button type="submit"
+                    style="background:transparent; border:1px solid rgba(255,255,255,0.2); padding:0.5rem 1rem; font-weight:400; color:white; width:auto;">Logout</button>
+            </form>
+            {% else %}
+            <a href="{% url 'account_login' %}">Login</a>
+            <a href="{% url 'account_signup' %}" class="btn" style="padding:0.5rem 1rem;">Sign Up</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    {% if user.is_authenticated %}
+    <script>
+        const notifScheme = window.location.protocol === "https:" ? "wss" : "ws";
+        const notifSocket = new WebSocket(`${notifScheme}://${window.location.host}/ws/notifications/`);
+        
+        const notifBell = document.getElementById('notif-bell');
+        const notifDropdown = document.getElementById('notif-dropdown');
+        const notifList = document.getElementById('notif-list');
+        const notifCount = document.getElementById('notif-count');
+        let count = parseInt(notifCount.textContent) || 0;
+
+        notifBell.onclick = () => {
+            notifDropdown.style.display = notifDropdown.style.display === 'none' ? 'block' : 'none';
+            if (notifDropdown.style.display === 'block') {
+                count = 0;
+                notifCount.style.display = 'none';
+                // Mark as read on server
+                fetch("{% url 'mark_notifications_read' %}", {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': "{{ csrf_token }}",
+                    }
+                });
+            }
+        };
+
+        notifSocket.onmessage = function(e) {
+            const data = JSON.parse(e.data);
+            if (data.type === 'notification') {
+                count++;
+                notifCount.innerText = count;
+                notifCount.style.display = 'block';
+                
+                const notif = document.createElement('div');
+                notif.style.cssText = "padding: 0.5rem; background: rgba(255,255,255,0.05); border-radius: 4px; font-size: 0.85rem; border-left: 3px solid var(--primary); animation: slideIn 0.3s ease;";
+                notif.innerHTML = `<a href="${data.link || '#'}" style="color: white; text-decoration: none;">${data.message}</a>`;
+                notifList.prepend(notif);
+
+                // Show desktop notification if permitted
+                if (Notification.permission === "granted") {
+                    new Notification("EliteAuction", { body: data.message });
+                }
+            }
+        };
+
+        if (Notification.permission !== "granted") {
+            Notification.requestPermission();
+        }
+    </script>
+    <style>
+    @keyframes slideIn {
+        from { transform: translateX(20px); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+    }
+    </style>
+    {% endif %}
+
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <script>
+        // Global script to add an eye icon to all password fields
+        document.addEventListener("DOMContentLoaded", function() {
+            const passFields = document.querySelectorAll('input[type="password"]');
+            passFields.forEach(function(field) {
+                // Wrapper
+                const wrapper = document.createElement('div');
+                wrapper.style.position = 'relative';
+                wrapper.style.display = 'flex';
+                wrapper.style.alignItems = 'center';
+                wrapper.style.width = '100%';
+                
+                // Insert wrapper before field
+                field.parentNode.insertBefore(wrapper, field);
+                // Move field inside wrapper
+                wrapper.appendChild(field);
+                
+                // Adjust field padding to make room for the icon
+                field.style.paddingRight = '45px';
+                
+                // Create icon
+                const icon = document.createElement('span');
+                icon.textContent = '👁️';
+                icon.style.position = 'absolute';
+                icon.style.right = '12px';
+                icon.style.cursor = 'pointer';
+                icon.style.color = 'var(--text-muted)';
+                icon.style.fontSize = '1.1rem';
+                icon.style.userSelect = 'none';
+                icon.style.zIndex = '10';
+                
+                icon.addEventListener('click', function() {
+                    if (field.type === 'password') {
+                        field.type = 'text';
+                        this.textContent = '🙈'; // Eye with slash or closed eye
+                    } else {
+                        field.type = 'password';
+                        this.textContent = '👁️';
+                    }
+                });
+                
+                wrapper.appendChild(icon);
+            });
+        });
+    </script>
+</body>
+
+</html>

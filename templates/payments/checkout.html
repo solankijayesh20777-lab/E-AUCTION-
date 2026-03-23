@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% block title %}Secure Checkout | EliteAuction{% endblock %}
+
+{% block content %}
+<div style="max-width: 600px; margin: 4rem auto;">
+    <div class="glass-card" style="text-align: center; padding: 3rem;">
+        <h1 style="margin-bottom: 2rem;">Choose Payment Method</h1>
+        
+        <div style="background: rgba(255,255,255,0.03); padding: 2rem; border-radius: 1rem; margin-bottom: 2rem; border: 1px solid var(--border-glass); text-align: left;">
+            <p style="color: var(--text-muted); margin-bottom: 0.5rem; text-align: center;">Total Amount</p>
+            <h2 style="font-size: 3rem; color: var(--primary); text-align: center;">${{ payment.amount }}</h2>
+            <hr style="border: 0; border-top: 1px solid var(--border-glass); margin: 1.5rem 0;">
+            {% if is_wallet_deposit %}
+                <p style="font-size: 1.1rem; text-align: center;">Transaction: <strong>Wallet Top-up</strong></p>
+            {% else %}
+                <p style="font-size: 1.1rem;">Item: <strong>{{ item.title }}</strong></p>
+            {% endif %}
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 1rem; margin-top: 2rem;">
+            {% if debug %}
+                <div style="padding: 2rem; border: 2px dashed #fbbf24; border-radius: 1.5rem; background: rgba(251, 191, 36, 0.05); text-align: center;">
+                    <h3 style="color: #fbbf24; margin-bottom: 1rem;">Development Mode</h3>
+                    <p style="color: var(--text-muted); margin-bottom: 2rem; font-size: 0.9rem;">Real payment gateways are disabled in development. Please use the button below to simulate a successful transaction.</p>
+                    
+                    <a href="{% url 'mock_payment_success' payment.id %}" class="btn" style="width: 100%; padding: 1.25rem; background: #fbbf24; color: #000; font-size: 1.1rem; box-shadow: 0 0 20px rgba(251, 191, 36, 0.3);">
+                        Confirm Mock Payment (${{ payment.amount }})
+                    </a>
+                </div>
+            {% else %}
+                {% if gateway == 'stripe' %}
+                    <a href="{% url 'initiate_payment' item.id %}?gateway=stripe" class="btn" style="width: 100%; padding: 1rem; background: #6366f1; display: flex; align-items: center; justify-content: center; gap: 0.75rem;">
+                        <span>Pay with Stripe</span>
+                    </a>
+                {% elif gateway == 'razorpay' %}
+                    <button id="rzp-button1" class="btn" style="width: 100%; padding: 1rem; background: #2b3a94; display: flex; align-items: center; justify-content: center; gap: 0.75rem;">
+                        <span>Pay with Razorpay</span>
+                    </button>
+                {% elif gateway == 'paytm' %}
+                    <a href="{% url 'initiate_payment' item.id %}?gateway=paytm" class="btn" style="width: 100%; padding: 1rem; background: #00baf2; display: flex; align-items: center; justify-content: center; gap: 0.75rem;">
+                        <span>Pay with Paytm</span>
+                    </a>
+                {% else %}
+                    <!-- Default fallback if no gateway specified yet -->
+                    <a href="?gateway=razorpay" class="btn" style="width: 100%; padding: 1rem;">Continue to Payment</a>
+                {% endif %}
+            {% endif %}
+        </div>
+
+        <p style="margin-top: 2rem; color: var(--text-muted); font-size: 0.85rem;">
+            {% if is_wallet_deposit %}
+                Funds will be added to your available balance immediately after verification.
+            {% else %}
+                Payments are secured and held in escrow until you confirm delivery.
+            {% endif %}
+        </p>
+    </div>
+</div>
+
+{% if not debug and gateway == 'razorpay' %}
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+var options = {
+    "key": "{{ razorpay_key }}",
+    "amount": "{{ order.amount }}",
+    "currency": "{{ order.currency }}",
+    "name": "EliteAuction",
+    "description": "{% if is_wallet_deposit %}Wallet Top-up{% else %}Payment for {{ item.title }}{% endif %}",
+    "image": "https://example.com/logo",
+    "order_id": "{{ order.id }}",
+    "callback_url": "{% url 'payment_callback' %}",
+    "prefill": {
+        "name": "{{ user.email }}",
+        "email": "{{ user.email }}",
+    },
+    "theme": {
+        "color": "#fbbf24"
+    }
+};
+var rzp1 = new Razorpay(options);
+var btn = document.getElementById('rzp-button1');
+if(btn) {
+    btn.onclick = function(e){
+        rzp1.open();
+        e.preventDefault();
+    }
+}
+</script>
+{% endif %}
+{% endblock %}

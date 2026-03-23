@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}Sign In | EliteAuction{% endblock %}
+
+{% block video_bg %}
+<div class="video-bg-wrapper">
+    <video autoplay loop muted playsinline>
+        <source src="https://cdn.pixabay.com/video/2020/11/07/54904-483011865_large.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="glass-card">
+    {% if process == "connect" %}
+    <h1>Connect {{ provider.name }}</h1>
+    <p class="text-center mb-4 text-muted">You are about to connect a new third-party account from <strong>{{ provider.name }}</strong>.</p>
+    {% else %}
+    <h1>Sign In Via {{ provider.name }}</h1>
+    <p class="text-center mb-4 text-muted">You are about to sign in using a third-party account from <strong>{{ provider.name }}</strong>.</p>
+    {% endif %}
+
+    <form method="post" class="text-center">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-primary mt-4" style="width: 100%;">Continue</button>
+    </form>
+    
+    <div class="auth-links mt-4 text-center">
+        <a href="{% url 'account_login' %}">Cancel</a>
+    </div>
+</div>
+{% endblock %}

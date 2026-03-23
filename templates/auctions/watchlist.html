@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}My Watchlist | EliteAuction{% endblock %}
+
+{% block content %}
+<div style="max-width: 1200px; margin: 0 auto;">
+    <h1 style="margin-bottom: 2rem;">My Watchlist</h1>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 2rem;">
+        {% for item in items %}
+            <div class="glass-card" style="padding: 0; overflow: hidden; display: flex; flex-direction: column;">
+                <div style="height: 180px; overflow: hidden;">
+                    <img src="{{ item.image.url }}" alt="{{ item.title }}" style="width: 100%; height: 100%; object-fit: cover;">
+                </div>
+                <div style="padding: 1.5rem;">
+                    <h3 style="margin-bottom: 0.5rem;">{{ item.title }}</h3>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                        <span style="font-weight: bold; color: var(--primary);">${{ item.current_price }}</span>
+                        <span style="font-size: 0.8rem; color: var(--text-muted);">{{ item.end_time|timeuntil }} left</span>
+                    </div>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <a href="{% url 'item_detail' item.pk %}" class="btn" style="flex: 1;">View</a>
+                        <a href="{% url 'toggle_watchlist' item.pk %}" class="btn" style="background: rgba(239, 68, 68, 0.2); border: 1px solid #ef4444; color: #ef4444; flex: 1;">Remove</a>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div style="grid-column: 1 / -1; text-align: center; padding: 4rem;">
+                <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Your watchlist is empty.</p>
+                <a href="{% url 'item_list' %}" class="btn" style="padding: 0.75rem 1.5rem;">Browse Auctions</a>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

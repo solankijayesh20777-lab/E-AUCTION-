@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}Sign Up | EliteAuction{% endblock %}
+
+{% block video_bg %}
+<div class="video-bg-wrapper">
+    <video autoplay loop muted playsinline>
+        <source src="https://cdn.pixabay.com/video/2020/11/07/54904-483011865_large.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="glass-card">
+    <h1>Sign Up</h1>
+    <p class="text-center mb-4 text-muted">
+        You are about to use your <strong>{{ account.get_provider.name }}</strong> account to login.
+    </p>
+    <p class="text-center mb-4 text-muted">As a final step, please complete the following form:</p>
+
+    {% if form.errors %}
+    <ul class="messages">
+        {% for field in form %}
+            {% for error in field.errors %}
+                <li class="error" style="color: #ff4d4d;">{{ error }}</li>
+            {% endfor %}
+        {% endfor %}
+        {% for error in form.non_field_errors %}
+            <li class="error" style="color: #ff4d4d;">{{ error }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+    <form class="signup" id="signup_form" method="post" action="{% url 'socialaccount_signup' %}">
+        {% csrf_token %}
+
+        {% for field in form %}
+        <p>
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
+        </p>
+        {% endfor %}
+
+        {% if redirect_field_value %}
+        <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+        {% endif %}
+
+        <button type="submit" class="btn mt-4">Complete Sign Up &raquo;</button>
+    </form>
+</div>
+{% endblock %}

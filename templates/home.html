@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block title %}Home | EliteAuction {% endblock %}
+
+{% block video_bg %}
+<!-- E-Auction Abstract Video Background -->
+<div class="video-bg-wrapper">
+    <!-- Note: using an abstract tech/bidding video URL from a free stock video API or reliable source -->
+    <video autoplay loop muted playsinline>
+        <source src="https://cdn.pixabay.com/video/2020/11/07/54904-483011865_large.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="glass-card" style="max-width: 700px; text-align: center;">
+    <h1 style="font-size: 2.5rem; margin-bottom: 1rem; background: linear-gradient(90deg, #f59e0b, #fbbf24); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">Welcome to EliteAuction</h1>
+    <p class="mb-4" style="color: var(--text-muted); font-size: 1.1rem;">Experience premium bidding on exclusive items with real-time updates and secure transactions.</p>
+    
+    {% if user.is_authenticated %}
+        <div style="background: rgba(0,0,0,0.2); padding: 1.5rem; border-radius: 0.5rem; border: 1px solid rgba(255,255,255,0.05); margin-top: 2rem;">
+            <h3 class="mb-4">Dashboard Overview</h3>
+            <p>Welcome back, <strong>{{ user.first_name|default:user.email }}</strong></p>
+            
+            <div class="mt-4 mb-4">
+                <span>Account Status: </span>
+                {% if user.is_mobile_verified %}
+                    <span class="status-badge status-green">Mobile Verified</span>
+                {% else %}
+                    <span class="status-badge status-red">Not Verified</span>
+                    <a href="{% url 'request_mobile_otp' %}" style="display: block; margin-top: 0.5rem; color: var(--primary);">Click here to verify mobile number</a>
+                {% endif %}
+            </div>
+
+            <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 1.5rem;">
+                <a href="{% url 'item_list' %}" class="btn" style="background: var(--primary); color: var(--bg-dark);">Start Bidding</a>
+                <a href="{% url 'buyer_dashboard' %}" class="btn" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);">Buyer Dashboard</a>
+                <a href="{% url 'seller_dashboard' %}" class="btn" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);">Start Selling</a>
+                <a href="{% url 'profile' %}" class="btn" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);">Manage Profile</a>
+            </div>
+        </div>
+    {% else %}
+        <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 2rem;">
+            <a href="{% url 'account_login' %}" class="btn" style="padding: 1rem 2.5rem; font-size: 1.1rem;">Log In to Bid</a>
+            <a href="{% url 'account_signup' %}" class="btn" style="padding: 1rem 2.5rem; font-size: 1.1rem; background: transparent; border: 2px solid var(--primary);">Create Account</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block title %}Seller Dashboard | EliteAuction{% endblock %}
+
+{% block content %}
+<div class="glass-card" style="max-width: 1000px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <h1>Seller Dashboard</h1>
+        <a href="{% url 'item_create' %}" class="btn">+ Upload New Item</a>
+    </div>
+
+    <!-- Quick Stats -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 3rem;">
+        <div style="background: rgba(255,251,235,0.05); padding: 1.5rem; border-radius: 1rem; border: 1px solid var(--border-glass);">
+            <p style="color: var(--text-muted); font-size: 0.9rem;">Total Sales</p>
+            <h2 style="color: var(--primary); margin: 0.5rem 0;">${{ total_sales }}</h2>
+        </div>
+        <div style="background: rgba(255,251,235,0.05); padding: 1.5rem; border-radius: 1rem; border: 1px solid var(--border-glass);">
+            <p style="color: var(--text-muted); font-size: 0.9rem;">Wallet Balance</p>
+            <h2 style="color: var(--primary); margin: 0.5rem 0;">${{ request.user.wallet.balance|default:"0.00" }}</h2>
+            <a href="{% url 'wallet_dashboard' %}" style="color: var(--primary); text-decoration: none; font-size: 0.8rem;">View Transactions →</a>
+        </div>
+        <div style="background: rgba(255,251,235,0.05); padding: 1.5rem; border-radius: 1rem; border: 1px solid var(--border-glass);">
+            <p style="color: var(--text-muted); font-size: 0.9rem;">Active Bids</p>
+            <h2 style="color: var(--primary); margin: 0.5rem 0;">{{ active_bids }}</h2>
+        </div>
+    </div>
+
+    <h3>Your Auction Items</h3>
+    <div style="margin-top: 1.5rem;">
+        {% if items %}
+            <div style="overflow-x: auto;">
+                <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                    <thead>
+                        <tr style="border-bottom: 1px solid var(--border-glass); color: var(--text-muted);">
+                            <th style="padding: 1rem;">Item</th>
+                            <th style="padding: 1rem;">Starting Price</th>
+                            <th style="padding: 1rem;">Status</th>
+                            <th style="padding: 1rem;">End Date</th>
+                            <th style="padding: 1rem;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in items %}
+                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                            <td style="padding: 1rem; display: flex; align-items: center; gap: 1rem;">
+                                {% if item.image %}
+                                    <img src="{{ item.image.url }}" alt="{{ item.title }}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 0.5rem;">
+                                {% endif %}
+                                <span>{{ item.title }}</span>
+                            </td>
+                            <td style="padding: 1rem;">${{ item.starting_price }}</td>
+                            <td style="padding: 1rem;">
+                                <span class="status-badge {% if item.status == 'active' %}status-green{% else %}status-red{% endif %}">
+                                    {{ item.get_status_display }}
+                                </span>
+                            </td>
+                            <td style="padding: 1rem;">{{ item.end_time|date:"M d, Y H:i" }}</td>
+                            <td style="padding: 1rem;">
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <a href="{% url 'item_update' item.pk %}" style="color: var(--primary); text-decoration: none; font-size: 0.9rem;">Edit</a> |
+                                    <a href="{% url 'item_delete' item.pk %}" style="color: #f87171; text-decoration: none; font-size: 0.9rem;">Delete</a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p style="text-align: center; color: var(--text-muted); margin-top: 2rem;">You haven't uploaded any items yet.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

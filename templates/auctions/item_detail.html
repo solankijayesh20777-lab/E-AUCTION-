@@ -1,0 +1,246 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ item.title }} | EliteAuction{% endblock %}
+
+{% block content %}
+<div style="max-width: 1000px; margin: 0 auto; display: grid; grid-template-columns: 1.5fr 1fr; gap: 2rem;">
+    <!-- Left Column: Image & Description -->
+    <div>
+        <div class="glass-card" style="padding: 0; overflow: hidden; margin-bottom: 2rem;">
+            <img src="{{ item.image.url }}" alt="{{ item.title }}" style="width: 100%; height: auto; max-height: 500px; object-fit: contain; background: #000;">
+        </div>
+        
+        <div class="glass-card">
+            <h1 style="text-align: left; margin-bottom: 1rem;">{{ item.title }}</h1>
+            <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem;">
+                <span class="status-badge status-green">{{ item.category.name }}</span>
+                <span style="color: var(--text-muted);">Listed by {{ item.seller.email }}</span>
+            </div>
+            <div style="line-height: 1.6; color: var(--text-light);">
+                {{ item.description|linebreaks }}
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Column: Bidding & Info -->
+    <div>
+        <div class="glass-card" style="position: sticky; top: 100px;">
+            <div style="text-align: center; margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border-glass);">
+                <span style="color: var(--text-muted); font-size: 0.9rem;">Current Price</span>
+                <div id="current-price" style="font-size: 3rem; font-weight: bold; color: var(--primary); margin: 0.5rem 0;">
+                    ${{ item.current_price }}
+                </div>
+                <div id="countdown" style="font-size: 0.9rem; color: #4ade80;">
+                    Auction ends in: {{ item.end_time|timeuntil }}
+                </div>
+            </div>
+
+            {% if user.is_authenticated %}
+                {% if user == item.seller %}
+                    <div style="background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 0.5rem; text-align: center; margin-bottom: 1.5rem;">
+                        You are the seller of this item.
+                    </div>
+                {% else %}
+                    <form id="bid-form" method="POST" style="margin-bottom: 2rem;">
+                        {% csrf_token %}
+                        <div style="margin-bottom: 1rem;">
+                            <label style="display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.5rem;">Your Bid (USD)</label>
+                            <input type="number" id="bid-amount" name="amount" step="0.01" min="{{ item.current_price|add:1 }}" placeholder="Enter bid amount" required
+                                   style="width: 100%; padding: 0.75rem; border-radius: 0.5rem; background: rgba(0,0,0,0.2); border: 1px solid var(--border-glass); color: white; font-size: 1.1rem;">
+                        </div>
+                        
+                        <div style="margin-bottom: 1.5rem; background: rgba(255,255,255,0.03); padding: 1rem; border-radius: 0.5rem; border: 1px solid var(--border-glass);">
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; color: var(--text-light); font-size: 0.9rem;">
+                                <input type="checkbox" name="is_auto_bid" onchange="document.getElementById('auto_limit').style.display = this.checked ? 'block' : 'none'">
+                                Enable Auto-bid
+                            </label>
+                            <div id="auto_limit" style="display: none; margin-top: 1rem;">
+                                <label style="display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.5rem;">Maximum Limit (USD)</label>
+                                <input type="number" name="max_auto_amount" step="0.01" placeholder="e.g. 500.00"
+                                       style="width: 100%; padding: 0.6rem; border-radius: 0.4rem; background: rgba(0,0,0,0.2); border: 1px solid var(--border-glass); color: white;">
+                                <p style="font-size: 0.7rem; color: var(--text-muted); margin-top: 0.5rem;">The system will bid for you up to this amount.</p>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn" style="width: 100%; padding: 1rem;">Place Bid</button>
+                    </form>
+                    <a href="{% url 'toggle_watchlist' item.pk %}" class="btn" style="width: 100%; padding: 0.75rem; background: rgba(255,255,255,0.05); border: 1px solid var(--border-glass); color: white; display: block; text-align: center;">
+                        {% if item in user.watchlist.items.all %}
+                            Remove from Watchlist
+                        {% else %}
+                            + Add to Watchlist
+                        {% endif %}
+                    </a>
+                {% endif %}
+            {% else %}
+                <div style="text-align: center; margin-bottom: 2rem;">
+                    <p style="color: var(--text-muted); margin-bottom: 1rem;">You must be logged in to bid.</p>
+                    <a href="{% url 'account_login' %}?next={{ request.path }}" class="btn" style="padding: 0.75rem 1.5rem;">Login to Bid</a>
+                </div>
+            {% endif %}
+
+            <!-- Payment & Delivery (For Won Items) -->
+            {% if user.is_authenticated %}
+                {% if item.status == 'ended' and user == item.winner %}
+                    <div class="glass-card" style="margin-top: 2rem; border-color: var(--primary); background: rgba(251, 191, 36, 0.05);">
+                        <h3 style="color: var(--primary); font-size: 1.1rem; margin-bottom: 1rem;">You Won! Pay Now</h3>
+                        <p style="font-size: 0.9rem; margin-bottom: 1.5rem;">Total Amount: ${{ item.current_price }}</p>
+                        
+                        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                            <a href="{% url 'initiate_payment' item.id %}?gateway=razorpay" class="btn" style="width: 100%; text-align: center;">Pay with Razorpay</a>
+                            <a href="{% url 'initiate_payment' item.id %}?gateway=stripe" class="btn" style="width: 100%; text-align: center; background: rgba(255,255,255,0.05); border: 1px solid var(--border-glass); color: white;">Pay with Stripe</a>
+                            
+                            <!-- Wallet Payment Option -->
+                            <div style="margin-top: 1rem; border-top: 1px solid var(--border-glass); padding-top: 1rem;">
+                                <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.5rem;">Or use your wallet balance:</p>
+                                <a href="{% url 'initiate_payment' item.id %}?gateway=wallet" class="btn" style="width: 100%; text-align: center; background: #4ade80; color: #000;">Pay with Wallet Balance</a>
+                            </div>
+                        </div>
+                    </div>
+                {% elif item.status == 'sold' %}
+                    <div class="glass-card" style="margin-top: 2rem; border-color: #4ade80; background: rgba(34, 197, 94, 0.05);">
+                        <h3 style="color: #4ade80; font-size: 1.1rem; margin-bottom: 1rem;">Auction Result</h3>
+                        {% if user == item.winner %} 
+                            <p style="font-size: 0.9rem; margin-bottom: 1.5rem;">Congratulations! You won this auction.</p>
+                            {% if not item.received_by_buyer %}
+                                <a href="{% url 'confirm_delivery' item.id %}" class="btn" style="width: 100%; margin-bottom: 0.5rem;">Confirm Delivery</a>
+                                <p style="font-size: 0.75rem; color: var(--text-muted);">Confiming delivery releases funds to the seller.</p>
+                            {% else %}
+                                <p style="color: #4ade80;">Success: Delivery Confirmed.</p>
+                            {% endif %}
+                        {% elif user == item.seller %}
+                            <p style="font-size: 0.9rem;">Item sold to {{ item.buyer.email|truncatechars:20 }}</p>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            {% endif %}
+
+            <!-- Recent Bids -->
+            <div style="margin-top: 2rem;">
+                <h3 style="font-size: 1rem; margin-bottom: 1rem; color: var(--text-muted);">Recent Bidding History</h3>
+                <div id="bids-list" style="display: flex; flex-direction: column; gap: 0.75rem;">
+                    {% for bid in bids %}
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem; background: rgba(255,255,255,0.03); border-radius: 4px; font-size: 0.9rem;">
+                            <span>{{ bid.user.email|truncatechars:15 }}</span>
+                            <span style="font-weight: 600; color: var(--primary);">${{ bid.amount }}</span>
+                        </div>
+                    {% empty %}
+                        <p id="no-bids" style="color: var(--text-muted); font-size: 0.85rem; text-align: center;">No bids yet. Be the first!</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const itemId = "{{ item.id }}";
+    const wsScheme = window.location.protocol === "https:" ? "wss" : "ws";
+    const auctionSocket = new WebSocket(`${wsScheme}://${window.location.host}/ws/auction/${itemId}/`);
+
+    const bidsList = document.getElementById('bids-list');
+    const currentPriceEl = document.getElementById('current-price');
+    const bidInput = document.getElementById('bid-amount');
+    const countdownEl = document.getElementById('countdown');
+
+    let auctionEndTime = new Date("{{ item.end_time|date:'Y-m-d H:i:s' }}");
+
+    function updateCountdown() {
+        const now = new Date();
+        const timeLeft = auctionEndTime - now;
+
+        if (timeLeft <= 0) {
+            countdownEl.innerText = "Auction Ended";
+            countdownEl.style.color = "#f87171";
+            const bidForm = document.getElementById('bid-form');
+            if (bidForm) bidForm.style.display = 'none';
+            return;
+        }
+
+        const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const mins = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+        const secs = Math.floor((timeLeft % (1000 * 60)) / 1000);
+
+        let countdownText = "Auction ends in: ";
+        if (days > 0) countdownText += `${days}d `;
+        countdownText += `${hours}h ${mins}m ${secs}s`;
+        
+        countdownEl.innerText = countdownText;
+        
+        // Flash red if less than 1 minute
+        if (timeLeft < 60000) {
+            countdownEl.style.color = secs % 2 === 0 ? "#f87171" : "#4ade80";
+        } else {
+            countdownEl.style.color = "#4ade80";
+        }
+    }
+
+    setInterval(updateCountdown, 1000);
+
+    auctionSocket.onmessage = function(e) {
+        const data = JSON.parse(e.data);
+        if (data.error) {
+            alert(data.error);
+            return;
+        }
+
+        // Update Price
+        currentPriceEl.innerText = `$${data.amount}`;
+        if (bidInput) {
+            bidInput.min = parseFloat(data.amount) + 1.00;
+            bidInput.value = bidInput.min;
+        }
+
+        // Update End Time if it changed
+        if (data.end_time) {
+            auctionEndTime = new Date(data.end_time);
+        }
+
+        // Update Bids List
+        const noBids = document.getElementById('no-bids');
+        if (noBids) noBids.remove();
+
+        const newBid = document.createElement('div');
+        newBid.style.cssText = "display: flex; justify-content: space-between; align-items: center; padding: 0.5rem; background: rgba(255,255,255,0.03); border-radius: 4px; font-size: 0.9rem; animation: highlight 1s ease;";
+        newBid.innerHTML = `<span>${data.user.split('@')[0]}...</span><span style="font-weight: 600; color: var(--primary);">$${data.amount}</span>`;
+        bidsList.prepend(newBid);
+
+        // Limit list to 10
+        if (bidsList.children.length > 10) {
+            bidsList.removeChild(bidsList.lastChild);
+        }
+    };
+
+    auctionSocket.onclose = function(e) {
+        console.error('Auction socket closed unexpectedly');
+    };
+
+    const bidForm = document.getElementById('bid-form');
+    if (bidForm) {
+        bidForm.onsubmit = function(e) {
+            const isAuto = this.elements['is_auto_bid'].checked;
+            
+            // For simple bids, use WebSocket for real-time feel
+            if (!isAuto) {
+                e.preventDefault();
+                const amount = bidInput.value;
+                if (amount) {
+                    auctionSocket.send(JSON.stringify({
+                        'amount': amount
+                    }));
+                }
+            }
+            // For auto-bids, let the normal POST submission handle it
+            // as it involves more complex form fields.
+        };
+    }
+</script>
+
+<style>
+@keyframes highlight {
+    from { background: var(--primary); }
+    to { background: rgba(255,255,255,0.03); }
+}
+</style>
+{% endblock %}

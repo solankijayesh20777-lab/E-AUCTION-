@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block title %}Confirm Delete | EliteAuction{% endblock %}
+
+{% block content %}
+<div class="glass-card">
+    <h1>Confirm Deletion</h1>
+    <p class="text-center mb-4">Are you sure you want to delete <strong>"{{ item.title }}"</strong>? This action cannot be undone.</p>
+
+    <form method="POST">
+        {% csrf_token %}
+        <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+            <button type="submit" class="btn" style="flex: 1; background-color: #ef4444;">Yes, Delete</button>
+            <a href="{% url 'seller_dashboard' %}" class="btn" style="flex: 1; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

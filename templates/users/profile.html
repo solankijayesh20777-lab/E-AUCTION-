@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}Update Profile | EliteAuction{% endblock %}
+
+{% block content %}
+<div class="glass-card">
+    <h1>Profile Update</h1>
+    <p class="text-center mb-4 text-muted">Update your personal information below.</p>
+    
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+        <li class="{{ message.tags }}">{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+    <p class="text-center" style="margin-bottom: 1.5rem;">Email: <strong>{{ user.email }}</strong></p>
+
+    <form method="post">
+        {% csrf_token %}
+        {% for field in form %}
+            <p>
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+            </p>
+        {% endfor %}
+        <button type="submit" class="btn mt-4">Save Changes</button>
+    </form>
+    
+    <div class="auth-links mt-4">
+        <a href="{% url 'account_change_password' %}">Change Password</a> |
+        <a href="{% url 'home' %}">Back to Dashboard</a>
+    </div>
+</div>
+{% endblock %}

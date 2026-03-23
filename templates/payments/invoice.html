@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block title %}Invoice #{{ payment.id }} | EliteAuction{% endblock %}
+
+{% block content %}
+<div style="max-width: 800px; margin: 2rem auto; background: white; color: #333; padding: 4rem; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.1);">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4rem;">
+        <div>
+            <h1 style="color: #fbbf24; margin: 0; font-size: 2.5rem;">EliteAuction</h1>
+            <p style="color: #666;">Premium Auction Platform</p>
+        </div>
+        <div style="text-align: right;">
+            <h2 style="margin: 0;">INVOICE</h2>
+            <p style="color: #666;">#{{ payment.id }}</p>
+            <p style="margin-top: 1rem;">Date: {{ payment.created_at|date:"M d, Y" }}</p>
+        </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; margin-bottom: 4rem;">
+        <div>
+            <h4 style="color: #666; text-transform: uppercase; margin-bottom: 1rem;">Billed To</h4>
+            <strong>{{ payment.buyer.get_full_name|default:payment.buyer.email }}</strong><br>
+            {{ payment.buyer.email }}<br>
+            {{ payment.buyer.mobile_number }}
+        </div>
+        <div>
+            <h4 style="color: #666; text-transform: uppercase; margin-bottom: 1rem;">From Seller</h4>
+            <strong>{{ payment.item.seller.get_full_name|default:payment.item.seller.email }}</strong><br>
+            {{ payment.item.seller.email }}
+        </div>
+    </div>
+
+    <table style="width: 100%; border-collapse: collapse; margin-bottom: 4rem;">
+        <thead>
+            <tr style="border-bottom: 2px solid #eee;">
+                <th style="text-align: left; padding: 1rem 0;">Item Description</th>
+                <th style="text-align: right; padding: 1rem 0;">Amount</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr style="border-bottom: 1px solid #eee;">
+                <td style="padding: 1.5rem 0;">
+                    <strong>{{ payment.item.title }}</strong><br>
+                    <span style="font-size: 0.85rem; color: #666;">Auction Winning Bid</span>
+                </td>
+                <td style="text-align: right; padding: 1.5rem 0; font-weight: bold;">${{ payment.amount }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div style="display: flex; justify-content: flex-end;">
+        <div style="width: 250px;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+                <span>Subtotal</span>
+                <span>${{ payment.amount }}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+                <span>Tax (0%)</span>
+                <span>$0.00</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-weight: bold; font-size: 1.25rem; border-top: 2px solid #fbbf24; padding-top: 1rem;">
+                <span>Total</span>
+                <span style="color: #fbbf24;">${{ payment.amount }}</span>
+            </div>
+        </div>
+    </div>
+
+    <div style="margin-top: 6rem; padding-top: 2rem; border-top: 1px solid #eee; text-align: center; color: #999; font-size: 0.85rem;">
+        Thank you for choosing EliteAuction. This is a computer-generated invoice.
+    </div>
+</div>
+
+<div style="text-align: center; margin-top: 2rem;">
+    <button onclick="window.print()" class="btn" style="padding: 0.75rem 2rem;">Print Invoice</button>
+</div>
+{% endblock %}

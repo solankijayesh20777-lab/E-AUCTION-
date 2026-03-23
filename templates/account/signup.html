@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load socialaccount %}
+
+{% block title %}Sign Up | EliteAuction{% endblock %}
+
+{% block video_bg %}
+<div class="video-bg-wrapper">
+    <video autoplay loop muted playsinline>
+        <source src="https://cdn.pixabay.com/video/2020/11/07/54904-483011865_large.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="glass-card">
+    <h1>Create Account</h1>
+    <p class="text-center mb-4 text-muted">Join the most exclusive e-auction platform.</p>
+
+    {% if form.errors %}
+    <ul class="messages">
+        {% for field in form %}
+        {% for error in field.errors %}
+        <li class="error">{{ error }}</li>
+        {% endfor %}
+        {% endfor %}
+        {% for error in form.non_field_errors %}
+        <li class="error">{{ error }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+    <form class="signup" id="signup_form" method="post" action="{% url 'account_signup' %}">
+        {% csrf_token %}
+
+        {% for field in form %}
+        <p>
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
+        </p>
+        {% endfor %}
+
+        {% if redirect_field_value %}
+        <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+        {% endif %}
+
+        <button type="submit" class="btn mt-4">Sign Up &raquo;</button>
+    </form>
+
+    <div style="margin: 1.5rem 0; display: flex; align-items: center; gap: 1rem;">
+        <div style="flex: 1; height: 1px; background: var(--border-glass);"></div>
+        <span style="color: var(--text-muted); font-size: 0.9rem;">OR</span>
+        <div style="flex: 1; height: 1px; background: var(--border-glass);"></div>
+    </div>
+
+    <a href="{% provider_login_url 'google' %}" class="btn" style="background: #fff; color: #000; border: 1px solid #ddd; display: flex; align-items: center; justify-content: center; gap: 0.75rem; padding: 0.7rem 1.25rem; font-size: 0.95rem; width: fit-content; margin: 0 auto; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border-radius: 4px;">
+        <img src="https://cdn.iconscout.com/icon/free/png-256/free-google-160-189824.png" alt="Google" style="width: 18px;">
+        Sign Up with Google / Gmail
+    </a>
+
+    <div class="auth-links mt-4">
+        Already have an account? <a href="{% url 'account_login' %}">Log In</a>
+    </div>
+</div>
+{% endblock %}

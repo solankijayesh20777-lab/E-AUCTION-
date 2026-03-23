@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block title %}Enter OTP | EliteAuction{% endblock %}
+
+{% block content %}
+<div class="glass-card">
+    <h1>Enter OTP</h1>
+    <p class="text-center mb-4 text-muted">We've sent a 6-digit code to your mobile number. Please enter it below.</p>
+    
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+        <li class="{{ message.tags }}">{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+        <p>
+            <label for="otp">6-Digit OTP:</label>
+            <input type="text" id="otp" name="otp" required maxlength="6" style="text-align: center; letter-spacing: 0.5rem; font-size: 1.5rem;" autocomplete="off">
+        </p>
+        <button type="submit" class="btn mt-4">Verify Mobile</button>
+    </form>
+    
+    <div class="auth-links mt-4">
+        Didn't receive the code? <a href="{% url 'request_mobile_otp' %}">Resend OTP</a><br><br>
+        <a href="{% url 'home' %}">Back to Dashboard</a>
+    </div>
+</div>
+{% endblock %}

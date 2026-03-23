@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load socialaccount %}
+
+{% block title %}Log In | EliteAuction{% endblock %}
+
+{% block video_bg %}
+<div class="video-bg-wrapper">
+    <video autoplay loop muted playsinline>
+        <source src="https://cdn.pixabay.com/video/2020/11/07/54904-483011865_large.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="glass-card">
+    <h1>Log In</h1>
+    <p class="text-center mb-4 text-muted">Welcome back. Enter your credentials to access your account.</p>
+
+    {% if form.errors %}
+        <ul class="messages">
+            <li class="error">Your username and password didn't match. Please try again.</li>
+        </ul>
+    {% endif %}
+
+    <form class="login" method="POST" action="{% url 'account_login' %}">
+        {% csrf_token %}
+        <p>
+            <label for="id_login">Email:</label>
+            <input type="email" name="login" required id="id_login">
+        </p>
+        <p>
+            <label for="id_password">Password:</label>
+            <input type="password" name="password" required id="id_password">
+        </p>
+        
+        {% if redirect_field_value %}
+            <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+        {% endif %}
+        
+        <button class="primaryAction btn mt-4" type="submit">Log In</button>
+    </form>
+
+    <div style="margin: 1.5rem 0; display: flex; align-items: center; gap: 1rem;">
+        <div style="flex: 1; height: 1px; background: var(--border-glass);"></div>
+        <span style="color: var(--text-muted); font-size: 0.9rem;">OR</span>
+        <div style="flex: 1; height: 1px; background: var(--border-glass);"></div>
+    </div>
+
+    <a href="{% provider_login_url 'google' %}" class="btn" style="background: #fff; color: #000; border: 1px solid #ddd; display: flex; align-items: center; justify-content: center; gap: 0.75rem; padding: 0.7rem 1.25rem; font-size: 0.95rem; width: fit-content; margin: 0 auto; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border-radius: 4px;">
+        <img src="https://cdn.iconscout.com/icon/free/png-256/free-google-160-189824.png" alt="Google" style="width: 18px;">
+        Continue with Google / Gmail
+    </a>
+
+    <div class="auth-links mt-4">
+        <a href="{% url 'fast_account_reset_password' %}">Forgot Password?</a><br><br>
+        Don't have an account? <a href="{% url 'account_signup' %}">Sign Up</a>
+    </div>
+</div>
+{% endblock %}

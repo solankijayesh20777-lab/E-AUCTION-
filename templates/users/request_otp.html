@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %}Verify Mobile | EliteAuction{% endblock %}
+
+{% block content %}
+<div class="glass-card">
+    <h1>Verify Mobile Number</h1>
+    <p class="text-center mb-4 text-muted">Enter your valid mobile number to receive a secure OTP.</p>
+    
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+        <li class="{{ message.tags }}">{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+        <p>
+            <label for="mobile_number">Mobile Number:</label>
+            <input type="text" id="mobile_number" name="mobile_number" value="{{ user.mobile_number|default_if_none:'' }}" required placeholder="e.g. +91 9876543210">
+        </p>
+        <button type="submit" class="btn mt-4">Send Verification Code</button>
+    </form>
+    
+    <div class="auth-links mt-4">
+        <a href="{% url 'home' %}">Back to Dashboard</a>
+    </div>
+</div>
+{% endblock %}
