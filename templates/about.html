@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block title %}About Us | EliteAuction{% endblock %}
+
+{% block content %}
+<div class="glass-card" style="max-width: 800px;">
+    <h1>About EliteAuction</h1>
+    <p class="text-center mb-4" style="color: var(--primary); font-weight: 600;">The Future of Digital Asset Auctions</p>
+    
+    <div style="line-height: 1.6; color: var(--text-muted);">
+        <p style="margin-bottom: 1.5rem;">
+            EliteAuction is a premier digital marketplace designed for seamless, secure, and transparent bidding. 
+            Whether you are looking to sell luxury assets or bid on unique items, our platform provides 
+            the tools you need to succeed in the global auction arena.
+        </p>
+        
+        <h3 style="color: var(--text-light); margin-bottom: 1rem;">Our Mission</h3>
+        <p style="margin-bottom: 1.5rem;">
+            To democratize high-end auctions by providing a safe, reliable, and user-friendly platform 
+            accessible to everyone, everywhere. We believe in transparency, security, and the thrill 
+            of the perfect bid.
+        </p>
+
+        <h3 style="color: var(--text-light); margin-bottom: 1rem;">Why Choose Us?</h3>
+        <ul style="margin-left: 1.5rem; margin-bottom: 1.5rem;">
+            <li><strong>Verified Sellers:</strong> Every seller is vetted for quality and reliability.</li>
+            <li><strong>Secure Payments:</strong> Integrated wallet and payment gateway protection.</li>
+            <li><strong>Real-time Notifications:</strong> Stay updated on every bid instantly.</li>
+            <li><strong>Premium Experience:</strong> Modern glassmorphism UI designed for excellence.</li>
+        </ul>
+    </div>
+
+    <div class="auth-links mt-4">
+        <a href="{% url 'item_list' %}" class="btn">Start Browsing</a>
+    </div>
+</div>
+{% endblock %}

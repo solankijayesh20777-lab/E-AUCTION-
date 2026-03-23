@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block title %}Contact Us | EliteAuction{% endblock %}
+
+{% block content %}
+<div class="glass-card" style="max-width: 600px;">
+    <h1>Contact Support</h1>
+    <p class="text-center mb-4" style="color: var(--primary); font-weight: 600;">We're Here to Help</p>
+    
+    <div style="line-height: 1.6; color: var(--text-muted); margin-bottom: 2rem;">
+        <p style="margin-bottom: 1.5rem; text-align: center;">
+            Have questions about a bid, an item, or your account? 
+            Our support team is available 24/7 to assist you.
+        </p>
+        
+        <div style="display: flex; flex-direction: column; gap: 1rem; background: rgba(255,255,255,0.05); padding: 1.5rem; border-radius: 1rem; border: 1px solid var(--border-glass);">
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <span style="font-size: 1.5rem;">📧</span>
+                <div>
+                    <strong style="color: var(--text-light); display: block;">Email Us</strong>
+                    <span>support@eliteauction.com</span>
+                </div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <span style="font-size: 1.5rem;">📞</span>
+                <div>
+                    <strong style="color: var(--text-light); display: block;">Call Us</strong>
+                    <span>+91 98765 43210</span>
+                </div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <span style="font-size: 1.5rem;">📍</span>
+                <div>
+                    <strong style="color: var(--text-light); display: block;">Our Office</strong>
+                    <span>Ahmedabad, Gujarat, India</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dummy Contact Form -->
+    <form method="post" action="#" onsubmit="alert('Message Sent Successfully!'); return false;">
+        <div>
+            <label for="name">Your Name</label>
+            <input type="text" id="name" placeholder="Jayesh Solanki" required>
+        </div>
+        <div>
+            <label for="email">Email Address</label>
+            <input type="email" id="email" placeholder="jayesh@gmail.com" required>
+        </div>
+        <div>
+            <label for="message">Message</label>
+            <textarea id="message" rows="4" style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--border-glass); color: #fff; padding: 0.75rem 1rem; border-radius: 0.5rem; font-size: 1rem; outline: none;" placeholder="How can we help you today?" required></textarea>
+        </div>
+        <button type="submit" class="btn mt-4">Send Message</button>
+    </form>
+</div>
+{% endblock %}

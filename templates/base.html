@@ -347,6 +347,8 @@
             <a href="{% url 'watchlist' %}">Watchlist</a>
             <a href="{% url 'wallet_dashboard' %}">My Wallet</a>
             <a href="{% url 'profile' %}">Profile</a>
+            <a href="{% url 'about' %}">About Us</a>
+            <a href="{% url 'contact' %}">Contact Us</a>
             <form method="post" action="{% url 'account_logout' %}" style="display:inline; margin:0; padding:0;">
                 {% csrf_token %}
                 <button type="submit"

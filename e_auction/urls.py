@@ -14,6 +14,8 @@ urlpatterns = [
     path('users/', include('users.urls')),
     path('auctions/', include('auctions.urls')),
     path('payments/', include('payments.urls')),
+    path('about/', TemplateView.as_view(template_name='about.html'), name='about'),
+    path('contact/', TemplateView.as_view(template_name='contact.html'), name='contact'),
 ]
 
 if settings.DEBUG:
