@@ -30,6 +30,11 @@
     
     <div class="auth-links mt-4">
         <a href="{% url 'account_change_password' %}">Change Password</a> |
+        {% if not user.is_mobile_verified %}
+            <a href="{% url 'request_mobile_otp' %}" style="color: var(--primary);">Verify Mobile Number</a> |
+        {% else %}
+            <span style="color: #10b981;">✓ Mobile Verified</span> |
+        {% endif %}
         <a href="{% url 'home' %}">Back to Dashboard</a>
     </div>
 </div>
